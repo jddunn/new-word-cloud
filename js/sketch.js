@@ -331,7 +331,7 @@ function renderWords() {
     
     var w = textWidth(word);
     
-    text(word, 0, y);
+    text(word, 20, y);
     fill(255);
     textSize(16);
     text(count, 0, y + 20);
