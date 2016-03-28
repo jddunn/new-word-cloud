@@ -358,7 +358,7 @@ function updateKWIC() {
  kwic = RiTa.kwic(theTextCopy, word, {
     ignorePunctuation: true,
     ignoreStopWords: true,
-    wordCount: 3
+    wordCount: 10
   });
   // console.log(kwic);
   if (kwic.length == 0) {
@@ -366,16 +366,16 @@ function updateKWIC() {
      fill(255, 255, 255);
     textFont("Lucida Console");
     textSize(14);
-    text("Context word not found", width / 1.85, height / 4);
+    text("Context word not found", width / 1.7, height / 4);
   } else {
 
-    var tw = textWidth(word) / 2;
+    var tw = textWidth(word);
 
     for (var i = 0; i < kwic.length; i++) {
 
       //console.log(display[i]);
       var parts = kwic[i].split(word);
-      var x = width / 1.9,
+      var x = width / 1.7,
         y = i * 20 + 115;
 
       if (y > height - 20) return;
@@ -384,7 +384,7 @@ function updateKWIC() {
         textSize(14);
         // fill(0);
         textAlign(RIGHT);
-        text(parts[0], x - tw, y);
+        text(parts[0], x - tw/1.5, y);
 
         fill(200, 0, 0);
         textFont("Lucida Console");
@@ -394,7 +394,7 @@ function updateKWIC() {
         fill(255, 255, 255);
         textFont("Lucida Console");
         textAlign(LEFT);
-        text(parts[1], x + tw, y);
+        text(parts[1], x + tw/1.5, y);
     }
   }
 }
