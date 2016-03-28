@@ -21,17 +21,25 @@
 
     <!-- Custom styles for this template -->
     <link href="css/main.css" rel="stylesheet">
-
+    <link rel='stylesheet' href='css/prism.css' />
     <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
     <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
     <!-- <script src="libraries/ie-emulation-modes-warning.js"></script> -->
     <script src="libraries/jquery-1.12.2.js"></script>
+    <script src="jquery-1.11.3.min.js"></script>
     <script src="libraries/p5.js" type="text/javascript"></script>
     <script src="libraries/p5.dom.js" type="text/javascript"></script>
+    <script src="libraries/rita-full.js" type="text/javascript"></script>
+
     <script src="libraries/p5.sound.js" type="text/javascript"></script>
+    <script src="libraries/prism.js" type="text/javascript"></script>
+    <script src="libraries/sourcecode.js" type="text/javascript"></script>
 
     <script src="js/sketch.js" type="text/javascript"></script>
     <script language="javascript" type="text/javascript" src="js/concordance.js"></script>
+
+    <script src="libraries/d3.js" type="text/javascript"></script>
+    <script src="libraries/d3.min.js" type="text/javascript"></script>
 
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
@@ -64,11 +72,11 @@
 
           <div id="innerCover">
             <h1 id="cover-heading">Text Analyzer / Visualizer</h1>
-            <p id="lead">Suite of text analyzing tools with visual word explorer
-            <br><br> Including: word / sentence / syllable counters, reading difficulty level, basic statistical calculations, word frequency visualization
+            <p id="lead">Suite of data analyzing tools, including word / sentence / syllable counters; reading difficulty level measurer; basic statistical calculations; word frequency visualization; and finally,
+            an analytical tool to find see all the context sentences of given key words
             <br><br>Press the 'UP' and 'DOWN' arrow keys to increase / decrease size in the visualization
             <br><br>
-            <b>Right now, the visualization works best only with large amounts of text!</b>
+            Right now, the visualization and context sentence finder work ONLY with 100+ words!
             </p>
             <!-- <p class="lead"> -->
               <!-- <a href="#" class="btn btn-lg btn-default">Learn more</a> -->
@@ -90,6 +98,8 @@
     <div id = "submitButton">
       <button id="submit">Submit</button>
     </div>
+
+
 
           <div class="mastfoot">
             <div class="inner">
