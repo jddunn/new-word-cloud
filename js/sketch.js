@@ -1,13 +1,21 @@
 //	Main code for a suite of text analysis / visualization tools for the web
+//  Written by: Johnny DUnn
+
+//  Includes syllable / word / sentence counter, Flesch reading index calculator,
+//  basic statistical calculations, word frequency tracker / visualization, and 
+//  a tool to find the context sentences of given key words.
+
 //	Adapted from Code 2 Data Poetics, SP16, Bryan Ma
 //		& Daniel Shiffman's A2Z example & Daniel Shiffman's
-//    Word Count Visualization Example
-//	Uses P5.js, D3.js, and Bootstrap for the web interface
+//    Word Count Visualization Example & the KWICmodel Example Sketch 
+//    from the RiTaJS Library
 
-var dropzone, input, button;
-var theText;
-var theTextCopy;
-var theTextCopy2;
+//	Uses P5.js, RitaJS, jQuery, Daniel Shifman's Concordance example (Code required in another JS file),
+//  and Bootstrap libraries
+
+var dropzone, input, button;    //  Variables for file dropping function
+var theText;                    //  The text that the user has either entered or dropped
+var theTextCopy;                //  Makes a separate copy of the text so original is untouched
 
 var totalSyllables = 0;
 var totalSentences = 0;
@@ -18,44 +26,38 @@ var avgSyllablesPerSentence = 0;
 var avgSyllablesPerWord = 0;
 var avgWordsPerSentence = 0;
 
-var flesch = 0;
-var readability = 0;		//	Reading difficulty based off of Flesch index
+var flesch = 0;       
 
-var concordance = {};
-var tokens = [];
-var phrases;
-var keys = [];
-var keysArray = [];
-var concordanceKeysArray = [];
+// var tokens = [];
+// var phrases;
+// var keys = [];
+// var keysArray = [];
+// var concordanceKeysArray = [];
 
-var concordance;
-var lines;
-var left = 0;
+var concordance;  
+var left = 0;   //  How far left should things be drawn..
 
-var wordCounterString;
-var frequentWords = [];
-var frequentWordsCount = [];
-var report = "";
+var wordCounterString;    
+
+var report = "";    //  Analysis data report
 
 
 var reportDiv;
 
 var wordSize = 50;
 
-var dataVisualizingOn = false;
+var dataVisualizingOn = false;    //  Once text has been entered.. visualize it!
 
-var buttons = ["word 1", "word 2", "word 3"
-
-],
+//  Make buttons so the user can enter a few "key words" to find the context around these words
+var buttons = ["word 1", "word 2", "word 3"],
   word = buttons[5], buttonX = 150, over, data, kwic, input;
 
-var context1Input;
-var context2Input;
+var context1Input;  //  Up to three different context words for the user to find
+var context2Input;  
 var context3Input;
-var contextButton;
+var contextButton;  
 
 function setup() {
-
   dropzone = select('#dropzone');
   dropzone.dragOver(highlight);
   dropzone.dragLeave(unhighlight);
@@ -63,8 +65,6 @@ function setup() {
   input = select('#textinput');
   button = select('#submit');
   button.mousePressed(handleInput);
-
-
 }
 
 function highlight() {
@@ -80,9 +80,7 @@ function gotFile(file) {
     theText = file.data;
     theTextCopy = theText;
     theTextCopy2 = loadStrings(theText);
-    // theTextCopy = lines.join(' ');
     beginProcessing(theText);
-
     concordance = new Concordance();
     concordance.process(theTextCopy);
     concordance.sortByCount();
@@ -94,9 +92,7 @@ function gotFile(file) {
 	  parent = document.getElementById("dropzone");
 	  parent.remove();
 	  parent = document.getElementById("textInputArea");
-	  // parent.remove();
 	  parent = document.getElementById("submitButton");
-	  // parent.remove();
     dataVisualizingOn = true;
     var canvas = createCanvas(windowWidth, windowHeight);
     canvas.position(0,0);
@@ -121,24 +117,9 @@ function handleInput() {
   theTextCopy = theText;
   theTextCopy2 = loadStrings(theText);
   beginProcessing(theText);
-
-  // var parent = document.getElementById("innerCover");
-  // var child = document.getElementById("lead");
-  // parent.removeChild(child);
-  // child = document.getElementById("cover-heading");
-  // parent.removeChild(child);
-  // parent = document.getElementById("dropzone");
-  // parent.remove();
-  // parent = document.getElementById("textInputArea");
-  // parent.remove();
-  // parent = document.getElementById("submitButton");
-  // parent.remove();
-
   concordance = new Concordance();
   concordance.process(theTextCopy);
   concordance.sortByCount();
-
-
   var parent = document.getElementById("innerCover");
   var child = document.getElementById("lead");
   parent.removeChild(child);
@@ -158,10 +139,7 @@ function handleInput() {
   context1Input = createInput();
   context2Input = createInput();
   context3Input = createInput();
-
-
 }
-
 
   //	Hides all the previous HTML elements once user submits data
 //   document.getElementById("lead").style.visibility = "hidden";
@@ -173,7 +151,6 @@ function handleInput() {
 
 //	The initial text processing: Worcd counter, sentence counting
 function beginProcessing (data) {
-
   var len = data.length;
   if (data.length === 0) {
     alert("Nothing entered");
@@ -186,7 +163,6 @@ function beginProcessing (data) {
     tokens 
     for (var i = 0; i < words.length; i++) {
       var word = words[i];
-    
       totalSyllables += countSyllables(word);
       totalWords++;
     }
@@ -215,8 +191,6 @@ function beginProcessing (data) {
     // report += wordCounterString;
     // var wordCounterString = keys[i] + " : " + concordance[keys[i];
     //	Readability scales the Flesch index into a more managable number
-    readability = flesch;
-
     // var basicTextResults = createP(report);
     createNewDiv();
   }
@@ -251,7 +225,6 @@ function calculateFlesch(totalSyllables, totalWords, totalSentences) {
 function countSyllables(word) {
   var syl = 0;
   var vowel = false;
-  
   //check each word for vowels (don't count more than one vowel in a row)
   for (var i = 0; i < word.length; i++) {
     if (isVowel(word.charAt(i)) && (vowel == false)) {
@@ -283,6 +256,7 @@ function isVowel(c) {
   else { return false; }
 }
 
+//  The code below works, but it's easier to use Daniel Shifman's concordance library
 // function findWordFrequency() {
 //   for (var i = 0; i < tokens.length; i++) {
 //     var word = tokens[i];
@@ -321,15 +295,6 @@ function isVowel(c) {
 
 function draw() {
   if (dataVisualizingOn === true) {
-
-
-  // input = createInput();
-  // input.position(20, 65);
-
-  // button = createButton('submit');
-  // button.position(150, 65);
-  // button.mousePressed(greet);
-
     background(0);
     // textSize(14);
     drawButtons();
@@ -339,7 +304,6 @@ function draw() {
     textSize(14);
     text(report, 20, 20, 500, 500);
     var xOffset = map(mouseX, 0, width, 0, left - width);
-  
     push();
     translate(-xOffset, 0);
     renderWords();
@@ -351,7 +315,6 @@ function draw() {
 function renderWords() {
   randomSeed(1);
   var theKeys = concordance.getKeys();
-  
   left = 0;
   for (var i = 0; i < 100; i++) {
     var word = theKeys[i];
@@ -371,7 +334,6 @@ function renderWords() {
     fill(255);
     textSize(16);
     text(count, 0, y + 20);
-    
     //rotate(map(mouseX, 0, width, 0, 1));
     translate(w,0);
     left += w;
@@ -386,9 +348,8 @@ function keyPressed() {
   }
 }
 
-
+//  RiTa library used below to find the context around the user-inputted words
 function updateKWIC() {
-
   // kwic = RiTa.kwic(theText.join('\n'), word, {
   //   ignorePunctuation: true,
   //   ignoreStopWords: true,
@@ -399,18 +360,13 @@ function updateKWIC() {
     ignoreStopWords: true,
     wordCount: 3
   });
-
   // console.log(kwic);
-
-
   if (kwic.length == 0) {
-
     // textAlign(CENTER);
      fill(255, 255, 255);
     textFont("Lucida Console");
     textSize(14);
     text("Context word not found", width / 1.85, height / 4);
-
   } else {
 
     var tw = textWidth(word) / 2;
@@ -435,7 +391,6 @@ function updateKWIC() {
         textAlign(CENTER);
         text(word, x, y);
 
-        // fill(0);
         fill(255, 255, 255);
         textFont("Lucida Console");
         textAlign(LEFT);
@@ -445,24 +400,15 @@ function updateKWIC() {
 }
 
 function drawButtons() {
-
   // console.log(buttons[0]);
   var posX = buttonX, posY = 40;
   fill(255,255,255,255);
   textSize(16);
   textFont("Lucida Console");
   text("Find Word in Context: ", 493, 40);
-      // console.log("Drawing buttons?");
-
   context1Input.position(495, 50);
-  // context1Button.position(605, 50);
-  // context1Button.mousePressed(changeContextWord);
-
-
 
   context2Input.position(675, 50);
-  // context2Button.position(805, 50);
-  // context2Button.mousePressed(changeContextWord);
 
   fill(255,255,255,255);
   textSize(14);
@@ -476,7 +422,6 @@ function drawButtons() {
   contextButton.mousePressed(changeContextWord);
 
   for (var i = 0; i < buttons.length; i++) {  
-    // console.log("Drawing a button..");
     textSize(14);
     noStroke();
     var on = word == (buttons[i]) ? true : false;
@@ -500,18 +445,14 @@ function changeContextWord() {
   context1Input = createInput();
   context2Input = createInput();
   context3Input = createInput();
-
-
   return true;
 }
 
 function inside(mx, my, posX, tw) {
-
   return (mx >= posX - 5 && mx <= posX +  585 && my >= 25 && my <= 44);
 }
 
 function mouseMoved() {
-
   over = null;
   var posX = buttonX, tw;
 
@@ -529,7 +470,6 @@ function mouseMoved() {
 }
 
 function mouseClicked() {
-
   var posX = buttonX, tw;
 
   for (var i = 0; i < buttons.length; i++) {
